@@ -16,7 +16,10 @@ require_once "auth_admin.php";
                 </div>
                 <div>
                     <label for="number" class="block text-gray-700 font-medium mb-1">Telefone</label>
-                    <input type="text" name="number" id="number" required class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
+                    <input type="text" name="number" id="number" required
+                        pattern="\d{11}" inputmode="numeric"
+                        title="O telefone deve conter exatamente 11 dígitos (DDD + número)"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div class="md:col-span-2">
                     <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
@@ -37,7 +40,8 @@ require_once "auth_admin.php";
                 </div>
                 <div>
                     <label for="address_number" class="block text-gray-700 font-medium mb-1">Número</label>
-                    <input type="text" name="address_number" id="address_number" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
+                    <input type="text" name="address_number" id="address_number" inputmode="numeric"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div>
                     <label for="complement" class="block text-gray-700 font-medium mb-1">Complemento</label>
@@ -57,7 +61,10 @@ require_once "auth_admin.php";
                 </div>
                 <div>
                     <label for="zip" class="block text-gray-700 font-medium mb-1">CEP</label>
-                    <input type="text" name="zip" id="zip" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
+                    <input type="text" name="zip" id="zip"
+                        pattern="\d{8}" inputmode="numeric"
+                        title="O CEP deve conter exatamente 8 dígitos"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
                 </div>
             </div>
 
@@ -68,7 +75,7 @@ require_once "auth_admin.php";
                 </button>
             </div>
             <div class="text-center">
-                <a href="login.php" class="text-blue-600 hover:underline">Voltar para o Login</a>
+                <a href="login.php" class="text-blue-600 hover:underline">Voltar</a>
             </div>
         </form>
     </div>

@@ -15,7 +15,7 @@ include_once "layout_header.php";
                 </div>
                 <div>
                     <label for="number" class="block text-gray-700 font-medium mb-1">Telefone</label>
-                    <input type="text" name="number" id="number" required class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
+                    <input type="text" name="number" id="number" required pattern="\d{11}" maxlength="11" title="Informe 11 dígitos" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div class="md:col-span-2">
                     <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
@@ -56,7 +56,7 @@ include_once "layout_header.php";
                 </div>
                 <div>
                     <label for="zip" class="block text-gray-700 font-medium mb-1">CEP</label>
-                    <input type="text" name="zip" id="zip" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
+                    <input type="text" name="zip" id="zip" pattern="\d{8}" maxlength="8" title="Informe 8 dígitos" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
                 </div>
             </div>
 
@@ -69,11 +69,11 @@ include_once "layout_header.php";
                 </div>
                 <div>
                     <label for="expiration_date" class="block text-gray-700 font-medium mb-1">Validade (MM/AA)</label>
-                    <input type="text" name="expiration_date" id="expiration_date" placeholder="MM/AA" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
+                    <input type="text" name="expiration_date" id="expiration_date" placeholder="MM/AA" pattern="(0[1-9]|1[0-2])\/\d{2}" title="Formato MM/AA" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div>
                     <label for="cvv" class="block text-gray-700 font-medium mb-1">CVV</label>
-                    <input type="text" name="cvv" id="cvv" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
+                    <input type="text" name="cvv" id="cvv" pattern="\d{3}" maxlength="3" title="Informe 3 dígitos" class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:outline-none">
                 </div>
                 <div class="md:col-span-2">
                     <label for="holder_name" class="block text-gray-700 font-medium mb-1">Nome do Titular</label>
@@ -93,6 +93,19 @@ include_once "layout_header.php";
         </form>
     </div>
 </section>
+
+<script>
+    document.getElementById('number').addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 11);
+    });
+    document.getElementById('zip').addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 8);
+    });
+    document.getElementById('cvv').addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+    });
+</script>
+
 <?php
 include_once "layout_footer.php";
 ?>
