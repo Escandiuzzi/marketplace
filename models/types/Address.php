@@ -31,6 +31,7 @@ class Address
     {
         return $this->street;
     }
+
     public function setStreet(string $street): void
     {
         $this->street = $street;
@@ -40,6 +41,7 @@ class Address
     {
         return $this->number;
     }
+    
     public function setNumber(string $number): void
     {
         $this->number = $number;
@@ -67,6 +69,7 @@ class Address
     {
         return $this->city;
     }
+
     public function setCity(string $city): void
     {
         $this->city = $city;
@@ -76,6 +79,7 @@ class Address
     {
         return $this->state;
     }
+
     public function setState(string $state): void
     {
         $this->state = $state;
