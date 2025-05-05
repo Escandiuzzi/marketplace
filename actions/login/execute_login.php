@@ -42,7 +42,7 @@ if ($client) {
 echo "login = " . $login . " / senha = " . $password . "<br>";
 
 if ($errors == TRUE) {
-    header("Location: ../../index.php");
+    header("Location: ../../login.php");
     echo "Login ou senha inválidos!<br>";
     exit;
 }
