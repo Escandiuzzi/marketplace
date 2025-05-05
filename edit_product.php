@@ -1,8 +1,8 @@
 <?php
 $page_title = "Editar Produto";
 include_once "layout_header.php";
-
 include_once "facade.php";
+require_once "auth_admin.php";
 
 $dao = $factory->getProductDao();
 $product_id = $_GET['id'] ?? null;

@@ -2,6 +2,7 @@
 $page_title = "Criar Produto";
 include_once "layout_header.php";
 include_once "facade.php";
+require_once "auth_admin.php";
 
 $supplier_id = $_GET['supplier_id'] ?? null;
 

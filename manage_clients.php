@@ -1,7 +1,9 @@
 <?php
-require "facade.php";
 
 $page_title = "Gerenciar Usuários";
+include_once "layout_header.php";
+include_once "facade.php";
+require_once "auth_admin.php";
 
 $dao = $factory->getClientDao();
 $search = $_GET['search'] ?? '';

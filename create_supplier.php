@@ -1,6 +1,7 @@
 <?php
 $page_title = "Criar Fornecedor";
 include_once "layout_header.php";
+require_once "auth_admin.php";
 ?>
 
 <section class="flex justify-center items-center min-h-screen bg-gray-100">

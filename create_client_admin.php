@@ -1,6 +1,7 @@
 <?php
 $page_title = "Novo Usuário";
 include_once "layout_header.php";
+require_once "auth_admin.php";
 ?>
 <section class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
     <div class="bg-white shadow-md rounded-2xl p-8 w-full max-w-2xl">

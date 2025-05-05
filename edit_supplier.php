@@ -3,6 +3,7 @@
 $page_title = "Gerenciar Fornecedores";
 include_once "layout_header.php";
 include_once "facade.php";
+require_once "auth_admin.php";
 
 $dao = $factory->getSupplierDao();
 $supplier_id = $_GET['id'] ?? null;

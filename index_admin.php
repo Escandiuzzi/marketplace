@@ -1,6 +1,7 @@
 <?php
 $page_title = "Admin Dashboard";
 include_once "layout_header.php";
+require_once "auth_admin.php";
 ?>
 
 <section class="min-h-screen bg-gray-100 py-12 px-6">
