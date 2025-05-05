@@ -14,7 +14,6 @@ if (isset($_SESSION['admin'])) {
 ?>
 <section class="relative flex items-center justify-center min-h-screen bg-gray-100">
 
-    <!-- Admin Login Button (Top Right) -->
     <div class="absolute top-4 right-4">
         <a
             href="admin_login.php"
@@ -23,7 +22,6 @@ if (isset($_SESSION['admin'])) {
         </a>
     </div>
 
-    <!-- Main Login Box -->
     <div class="bg-white shadow-md rounded-2xl p-8 w-full max-w-md">
         <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
 
