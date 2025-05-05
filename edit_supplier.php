@@ -1,4 +1,5 @@
 <?php
+
 $page_title = "Gerenciar Fornecedores";
 include_once "layout_header.php";
 include_once "facade.php";
@@ -8,6 +9,13 @@ $supplier_id = $_GET['id'] ?? null;
 $supplier = $dao->searchById($supplier_id);
 
 $products = $factory->getProductDao()->getBySupplierId($supplier_id);
+$product_search = $_GET['search'] ?? '';
+
+if ($product_search) {
+    $products = array_filter($products, function ($product) use ($product_search) {
+        return stripos($product->getName(), $product_search) !== false;
+    });
+}
 ?>
 
 <section class="min-h-screen bg-gray-100 py-10 px-6">
@@ -100,8 +108,24 @@ $products = $factory->getProductDao()->getBySupplierId($supplier_id);
                 </a>
             </div>
 
+            <!-- Product Search -->
+            <form method="GET" class="mb-6 flex gap-2">
+                <input type="hidden" name="id" value="<?= $supplier->getId() ?>">
+                <input
+                    type="text"
+                    name="search"
+                    value="<?= htmlspecialchars($product_search) ?>"
+                    placeholder="Buscar produto por nome..."
+                    class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                <button
+                    type="submit"
+                    class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800">
+                    Buscar
+                </button>
+            </form>
+
             <?php if (count($products) === 0): ?>
-                <p class="text-gray-600">Nenhum produto cadastrado para este fornecedor.</p>
+                <p class="text-gray-600">Nenhum produto encontrado para este fornecedor.</p>
             <?php else: ?>
                 <div class="grid md:grid-cols-2 gap-4">
                     <?php foreach ($products as $product): ?>

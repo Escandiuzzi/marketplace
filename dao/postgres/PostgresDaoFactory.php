@@ -1,6 +1,4 @@
 <?php
-
-include_once('dao/DaoFactoryAbstract.php');
 include_once('PostgresClientDao.php');
 include_once('PostgresSupplierDao.php');
 include_once('PostgresProductDao.php');

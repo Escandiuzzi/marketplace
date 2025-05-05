@@ -1,6 +1,5 @@
 <?php
 
-include_once('dao/ProductDaoInterface.php');
 include_once('PostgresDao.php');
 
 class PostgresProductDao extends PostgresDao implements ProductDaoInterface
@@ -154,7 +153,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $products = array();
 
         $query = "SELECT
-                    supplier_id, name, description, quantity, price
+                    id, supplier_id, name, description, quantity, price
                 FROM
                     " . $this->table_name .
             " ORDER BY id ASC";

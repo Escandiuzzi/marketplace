@@ -1,6 +1,5 @@
 <?php
 
-include_once('dao/SupplierDaoInterface.php');
 include_once('PostgresDao.php');
 
 class PostgresSupplierDao extends PostgresDao implements SupplierDaoInterface
@@ -90,7 +89,6 @@ class PostgresSupplierDao extends PostgresDao implements SupplierDaoInterface
         $stmt->bindParam(":city", $client->getAddress()->getCity());
         $stmt->bindParam(":state", $client->getAddress()->getState());
         $stmt->bindParam(":zip", $client->getAddress()->getZip());
-
 
         // execute the query
         if ($stmt->execute()) {

@@ -20,7 +20,7 @@ if (is_session_started() === FALSE) {
 	<header class="bg-white shadow p-4 flex items-center justify-between">
 		<!-- Logo Area -->
 		<div class="flex items-center space-x-4">
-			<div class="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-full text-xl font-bold">
+			<div class="w-10 h-10 bg-<?php echo (isset($_SESSION["admin"]) && $_SESSION["admin"] == TRUE) ? 'red' : 'blue'; ?>-600 text-white flex items-center justify-center rounded-full text-xl font-bold">
 				<a href="<?php echo (isset($_SESSION["admin"]) && $_SESSION["admin"] == TRUE) ? 'index_admin.php' : './login.php'; ?>" class="w-full h-full text-white hover:text-gray-200 relative"> </a>
 				<i class="fas fa-home"></i>
 			</div>

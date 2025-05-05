@@ -18,6 +18,11 @@ class CreditCard
         $this->holderName = $holderName;
     }
 
+    public static function empty(): self
+    {
+        return new self('', '', '', '');
+    }
+
     public function getNumber(): string
     {
         return $this->number;
