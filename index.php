@@ -5,17 +5,25 @@ include_once "facade.php";
 
 $productDao = $factory->getProductDao();
 $search = $_GET['search'] ?? '';
+$current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$products_per_page = 6;
 
 // Fetch all products
-$products = $productDao->getAll();
+$all_products = $productDao->getAll();
 
-if ($search) {
-    $products = array_filter($products, function ($product) use ($search) {
+// Filter by name or id if search is present
+$filtered_products = $search
+    ? array_filter($all_products, function ($product) use ($search) {
         return stripos($product->getName(), $search) !== false
             || strpos((string)$product->getId(), $search) !== false;
-    });
-}
+    })
+    : $all_products;
 
+// Pagination
+$total_products = count($filtered_products);
+$total_pages = ceil($total_products / $products_per_page);
+$offset = ($current_page - 1) * $products_per_page;
+$products = array_slice($filtered_products, $offset, $products_per_page);
 ?>
 
 <section class="min-h-screen bg-gray-100 py-12 px-6">
@@ -44,7 +52,6 @@ if ($search) {
                 <?php foreach ($products as $product): ?>
                     <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
 
-                        <!-- Product Image -->
                         <?php if ($product->getImage()): ?>
                             <img src="data:image/jpeg;base64,<?= base64_encode($product->getImage()) ?>" alt="Imagem do Produto"
                                 class="w-full h-48 object-cover rounded mb-4">
@@ -54,24 +61,29 @@ if ($search) {
                             </div>
                         <?php endif; ?>
 
-                        <!-- Product Name and ID -->
                         <h2 class="text-xl font-semibold mb-1"><?= htmlspecialchars($product->getName()) ?></h2>
                         <p class="text-sm text-gray-500 mb-2">ID: <?= htmlspecialchars($product->getId()) ?></p>
-
-                        <!-- Stock Info -->
                         <p class="text-gray-600 mb-1">Preço: R$ <?= number_format($product->getStock()->getPrice(), 2, ',', '.') ?></p>
                         <p class="text-gray-600 mb-4">Quantidade: <?= htmlspecialchars($product->getStock()->getQuantity()) ?></p>
-
-                        <!-- Link -->
-                        <a
-                            href="product_details.php?id=<?= $product->getId() ?>"
-                            class="text-blue-600 hover:underline text-sm">
+                        <a href="product_details.php?id=<?= $product->getId() ?>" class="text-blue-600 hover:underline text-sm">
                             Ver detalhes
                         </a>
                     </div>
                 <?php endforeach; ?>
             </div>
 
+            <!-- Pagination Controls -->
+            <?php if ($total_pages > 1): ?>
+                <div class="mt-8 flex justify-center gap-2">
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="?<?= http_build_query(['search' => $search, 'page' => $i]) ?>"
+                            class="px-3 py-1 rounded border text-sm
+                           <?= $i === $current_page ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>
