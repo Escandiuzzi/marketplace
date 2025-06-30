@@ -51,16 +51,17 @@ CREATE TABLE products (
     price DECIMAL(10, 2) NOT NULL,
     quantity INT NOT NULL DEFAULT 0,
     supplier_id INT,
+    image BYTEA,
     CONSTRAINT fk_supplier
         FOREIGN KEY (supplier_id)
         REFERENCES suppliers(id)
         ON DELETE SET NULL
 );
 
-INSERT INTO products (name, description, price, quantity, supplier_id) VALUES
-('Product A', 'Description for Product A', 10.00, 100, 4),
-('Product B', 'Description for Product B', 20.00, 50, 5),
-('Product C', 'Description for Product C', 30.00, 200, 5);
+INSERT INTO products (name, description, price, quantity, supplier_id, image) VALUES
+('Product A', 'Description for Product A', 10.00, 100, 1, NULL),
+('Product B', 'Description for Product B', 20.00, 50, 2, NULL),
+('Product C', 'Description for Product C', 30.00, 200, 3, NULL);
 
 
 INSERT INTO admins (name, email, password) VALUES

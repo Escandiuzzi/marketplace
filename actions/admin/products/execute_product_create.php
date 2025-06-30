@@ -1,7 +1,6 @@
 <?php
 require "../../../facade.php";
 
-// Function to clean inputs
 function clean($value)
 {
     return htmlspecialchars(trim($value));
@@ -14,6 +13,14 @@ $description = clean($_POST['description'] ?? '');
 $price = $_POST['price'] ?? '';
 $quantity = $_POST['quantity'] ?? '';
 $supplier_id = $_POST['supplier_id'] ?? '';
+
+$image = null;
+
+if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    $imageTmpPath = $_FILES['image']['tmp_name'];
+
+    $image = file_get_contents($imageTmpPath);
+}
 
 if (!$name) $errors[] = "Nome do produto é obrigatório.";
 if (!$description) $errors[] = "Descrição é obrigatória.";
@@ -29,11 +36,9 @@ if (!empty($errors)) {
 }
 
 $stock = new Stock($quantity, $price);
-$product = new Product(0, $supplier_id, $name, $description, $stock);
+$product = new Product(0, $supplier_id, $name, $description, $image, $stock);
 
 $dao = $factory->getProductDao();
 $dao->insert($product);
 
 header("Location: /Marketplace/edit_supplier.php?id=" . $supplier_id);
-
-?>

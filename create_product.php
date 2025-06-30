@@ -16,7 +16,7 @@ if (!$supplier_id) {
     <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-2xl">
         <h2 class="text-2xl font-semibold mb-6 text-center">Criar Produto</h2>
 
-        <form action="./actions/admin/products/execute_product_create.php" method="POST" class="space-y-4">
+        <form action="./actions/admin/products/execute_product_create.php" method="POST" enctype="multipart/form-data" class="space-y-4">
             <input type="hidden" name="supplier_id" value="<?= $supplier_id ?>">
 
             <div>
@@ -45,6 +45,12 @@ if (!$supplier_id) {
                 </div>
             </div>
 
+            <div>
+                <label for="image" class="block font-medium text-gray-700 mb-1">Imagem do Produto</label>
+                <input type="file" name="image" id="image" accept="image/*"
+                    class="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+
             <div class="text-center mt-6">
                 <button type="submit"
                     class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
@@ -52,6 +58,7 @@ if (!$supplier_id) {
                 </button>
             </div>
         </form>
+
     </div>
 </section>
 

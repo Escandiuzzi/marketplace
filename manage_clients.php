@@ -8,9 +8,11 @@ require_once "auth_admin.php";
 $dao = $factory->getClientDao();
 $search = $_GET['search'] ?? '';
 $all_users = $dao->getAll();
+
 $users = $search
-    ? array_filter($all_users, function($user) use ($search) {
-        return stripos($user->getName(), $search) !== false;
+    ? array_filter($all_users, function ($user) use ($search) {
+        return stripos($user->getName(), $search) !== false
+            || strpos((string)$user->getId(), $search) !== false;
     })
     : $all_users;
 ?>
@@ -27,7 +29,7 @@ $users = $search
         <input
             type="text"
             name="search"
-            placeholder="Buscar por nome..."
+            placeholder="Buscar por nome ou id..."
             value="<?= htmlspecialchars($search) ?>"
             class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
         <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Buscar</button>
@@ -37,6 +39,7 @@ $users = $search
         <table class="w-full table-auto">
             <thead class="bg-gray-200 text-left">
                 <tr>
+                    <th class="p-4">ID</th> <!-- New column -->
                     <th class="p-4">Nome</th>
                     <th class="p-4">Email</th>
                     <th class="p-4">Número</th>
@@ -46,11 +49,12 @@ $users = $search
             <tbody>
                 <?php if (empty($users)): ?>
                     <tr>
-                        <td colspan="4" class="p-4 text-center text-gray-500">Nenhum usuário encontrado.</td>
+                        <td colspan="5" class="p-4 text-center text-gray-500">Nenhum usuário encontrado.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($users as $user): ?>
                         <tr class="border-b">
+                            <td class="p-4"><?= htmlspecialchars($user->getId()) ?></td> <!-- New cell -->
                             <td class="p-4"><?= htmlspecialchars($user->getName()) ?></td>
                             <td class="p-4"><?= htmlspecialchars($user->getEmail()) ?></td>
                             <td class="p-4"><?= htmlspecialchars($user->getNumber()) ?></td>
@@ -64,6 +68,7 @@ $users = $search
             </tbody>
         </table>
     </div>
+
 </section>
 
 <?php include_once "layout_footer.php"; ?>

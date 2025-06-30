@@ -9,8 +9,8 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
     public function insert(Product $product): bool
     {
         $query = "INSERT INTO " . $this->table_name .
-            "(supplier_id, name, description, quantity, price ) VALUES" .
-            "(:supplier_id, :name, :description, :quantity, :price)";
+            "(supplier_id, name, description, quantity, price, image) VALUES" .
+            "(:supplier_id, :name, :description, :quantity, :price, :image)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -20,6 +20,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $stmt->bindParam(":description", $product->getDescription());
         $stmt->bindParam(":quantity", $product->getStock()->getQuantity());
         $stmt->bindParam(":price", $product->getStock()->getPrice());
+        $stmt->bindParam(":image", $product->getImage(), PDO::PARAM_LOB);
 
         if ($stmt->execute()) {
             return true;
@@ -103,6 +104,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
                 $row['supplier_id'],
                 $row['name'],
                 $row['description'],
+                '',
                 new Stock(
                     $row['quantity'],
                     $row['price']
@@ -138,6 +140,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
                 $row['supplier_id'],
                 $row['name'],
                 $row['description'],
+                '',
                 new Stock(
                     $row['quantity'],
                     $row['price']
@@ -153,7 +156,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $products = array();
 
         $query = "SELECT
-                    id, supplier_id, name, description, quantity, price
+                    id, supplier_id, name, description, quantity, price, image
                 FROM
                     " . $this->table_name .
             " ORDER BY id ASC";
@@ -168,6 +171,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
                 $row['supplier_id'],
                 $row['name'],
                 $row['description'],
+                $row['image'],
                 new Stock(
                     $row['quantity'],
                     $row['price']
@@ -183,7 +187,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $products = array();
 
         $query = "SELECT
-                    id, name, description, quantity, price
+                    id, name, description, quantity, price, image
                 FROM
                     " . $this->table_name .
             " WHERE supplier_id = :supplier_id ORDER BY id ASC";
@@ -194,11 +198,13 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             extract($row);
+            $image = is_resource($row['image']) ? stream_get_contents($row['image']) : null;
             $products[] = new Product(
                 $row['id'],
                 $supplier_id,
                 $row['name'],
                 $row['description'],
+                $image,
                 new Stock(
                     $row['quantity'],
                     $row['price']

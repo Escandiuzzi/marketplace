@@ -14,7 +14,8 @@ $product_search = $_GET['search'] ?? '';
 
 if ($product_search) {
     $products = array_filter($products, function ($product) use ($product_search) {
-        return stripos($product->getName(), $product_search) !== false;
+        return stripos($product->getName(), $product_search) !== false
+            || strpos((string)$product->getId(), $product_search) !== false;
     });
 }
 ?>
@@ -116,7 +117,7 @@ if ($product_search) {
                     type="text"
                     name="search"
                     value="<?= htmlspecialchars($product_search) ?>"
-                    placeholder="Buscar produto por nome..."
+                    placeholder="Buscar produto por nome ou id..."
                     class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
                 <button
                     type="submit"
@@ -131,7 +132,16 @@ if ($product_search) {
                 <div class="grid md:grid-cols-2 gap-4">
                     <?php foreach ($products as $product): ?>
                         <div class="border rounded-lg p-4 shadow bg-gray-50">
+                            <?php if ($product->getImage()): ?>
+                                <img src="data:image/jpeg;base64,<?= base64_encode($product->getImage()) ?>" alt="Imagem do Produto" class="w-full h-48 object-cover mb-4 rounded">
+                            <?php else: ?>
+                                <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 mb-4 rounded">
+                                    Sem imagem
+                                </div>
+                            <?php endif; ?>
+
                             <h4 class="font-bold text-lg"><?= htmlspecialchars($product->getName()) ?></h4>
+                            <p class="text-sm text-gray-500 mb-2">ID: <?= htmlspecialchars($product->getId()) ?></p>
                             <p class="text-gray-600 mb-2">Preço: R$ <?= number_format($product->getStock()->getPrice(), 2, ',', '.') ?></p>
                             <p class="text-gray-600 mb-2">Quantidade: <?= htmlspecialchars($product->getStock()->getQuantity()) ?></p>
 
@@ -142,6 +152,7 @@ if ($product_search) {
                         </div>
                     <?php endforeach; ?>
                 </div>
+
             <?php endif; ?>
         </div>
     </div>

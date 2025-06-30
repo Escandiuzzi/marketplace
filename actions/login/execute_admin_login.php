@@ -27,8 +27,6 @@ if ($admin) {
         $_SESSION["username"] = stripslashes($admin->getName());
         $_SESSION["admin"] = TRUE;
 
-        var_dump($_SESSION);
-        
         header("Location: ../../index_admin.php");
         echo 'logged in as ' . $_SESSION["username"] . "<br>";
         exit;
@@ -44,7 +42,6 @@ if ($admin) {
 echo "email = " . $email . " / senha = " . $password . "<br>";
 
 if ($errors == TRUE) {
-    var_dump($_SESSION);
     //header("Location: ../../index_admin.php");
     echo "Login ou senha inválidos!<br>";
     exit;

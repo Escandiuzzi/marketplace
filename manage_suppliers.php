@@ -10,10 +10,12 @@ $search = $_GET['search'] ?? '';
 $all_suppliers = $dao->getAll();
 
 $suppliers = $search
-    ? array_filter($all_suppliers, function($supplier) use ($search) {
-        return stripos($supplier->getName(), $search) !== false;
+    ? array_filter($all_suppliers, function ($supplier) use ($search) {
+        return stripos($supplier->getName(), $search) !== false
+            || strpos((string)$supplier->getId(), $search) !== false;
     })
     : $all_suppliers;
+
 ?>
 
 <section class="min-h-screen bg-gray-100 py-12 px-6">
@@ -33,7 +35,7 @@ $suppliers = $search
                     type="text"
                     name="search"
                     value="<?= htmlspecialchars($search) ?>"
-                    placeholder="Buscar fornecedor por nome..."
+                    placeholder="Buscar fornecedor por nome ou id..."
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-400">
                 <button
                     type="submit"
@@ -50,6 +52,7 @@ $suppliers = $search
                 <?php foreach ($suppliers as $supplier): ?>
                     <div class="bg-white p-6 rounded-xl shadow">
                         <h2 class="text-xl font-semibold mb-2"><?= htmlspecialchars($supplier->getName()) ?></h2>
+                        <p class="text-sm text-gray-500 mb-2">ID: <?= htmlspecialchars($supplier->getId()) ?></p>
                         <p class="text-gray-600 mb-4">
                             Description: <?= htmlspecialchars($supplier->getDescription()) ?>
                         </p>
@@ -68,6 +71,7 @@ $suppliers = $search
                         </div>
                     </div>
                 <?php endforeach; ?>
+
             </div>
         <?php endif; ?>
     </div>

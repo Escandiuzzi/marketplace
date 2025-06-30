@@ -41,7 +41,7 @@ if (!empty($errors)) {
 }
 
 $stock = new Stock($quantity, $price);
-$product = new Product($id, $supplier_id, $name, $description, $stock);
+$product = new Product($id, $supplier_id, $name, $description, '', $stock);
 
 $dao = $factory->getProductDao();
 $dao->update($product);
