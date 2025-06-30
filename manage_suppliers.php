@@ -9,12 +9,23 @@ $dao = $factory->getSupplierDao();
 $search = $_GET['search'] ?? '';
 $all_suppliers = $dao->getAll();
 
+// Filter by name or ID
 $suppliers = $search
     ? array_filter($all_suppliers, function ($supplier) use ($search) {
         return stripos($supplier->getName(), $search) !== false
             || strpos((string)$supplier->getId(), $search) !== false;
     })
     : $all_suppliers;
+
+// Pagination setup
+$suppliers_per_page = 9;
+$current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$total_suppliers = count($suppliers);
+$total_pages = ceil($total_suppliers / $suppliers_per_page);
+$offset = ($current_page - 1) * $suppliers_per_page;
+
+// Slice for current page
+$suppliers_paginated = array_slice($suppliers, $offset, $suppliers_per_page);
 
 ?>
 
@@ -45,11 +56,11 @@ $suppliers = $search
             </div>
         </form>
 
-        <?php if (count($suppliers) === 0): ?>
+        <?php if (count($suppliers_paginated) === 0): ?>
             <p class="text-gray-600">Nenhum fornecedor encontrado.</p>
         <?php else: ?>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php foreach ($suppliers as $supplier): ?>
+                <?php foreach ($suppliers_paginated as $supplier): ?>
                     <div class="bg-white p-6 rounded-xl shadow">
                         <h2 class="text-xl font-semibold mb-2"><?= htmlspecialchars($supplier->getName()) ?></h2>
                         <p class="text-sm text-gray-500 mb-2">ID: <?= htmlspecialchars($supplier->getId()) ?></p>
@@ -71,8 +82,22 @@ $suppliers = $search
                         </div>
                     </div>
                 <?php endforeach; ?>
-
             </div>
+
+            <!-- Pagination -->
+            <?php if ($total_pages > 1): ?>
+                <div class="mt-8 flex justify-center gap-2">
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a
+                            href="?<?= http_build_query(['search' => $search, 'page' => $i]) ?>"
+                            class="px-3 py-1 rounded border text-sm
+                                <?= $i === $current_page ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+                </div>
+            <?php endif; ?>
+
         <?php endif; ?>
     </div>
 </section>

@@ -1,6 +1,6 @@
 <?php
 
-$page_title = "Gerenciar Fornecedores";
+$page_title = "Fornecedor";
 include_once "layout_header.php";
 include_once "facade.php";
 require_once "auth_admin.php";
@@ -9,15 +9,25 @@ $dao = $factory->getSupplierDao();
 $supplier_id = $_GET['id'] ?? null;
 $supplier = $dao->searchById($supplier_id);
 
-$products = $factory->getProductDao()->getBySupplierId($supplier_id);
+$productDao = $factory->getProductDao();
+$all_products = $productDao->getBySupplierId($supplier_id);
 $product_search = $_GET['search'] ?? '';
 
-if ($product_search) {
-    $products = array_filter($products, function ($product) use ($product_search) {
+// Filter by name or ID
+$products = $product_search
+    ? array_filter($all_products, function ($product) use ($product_search) {
         return stripos($product->getName(), $product_search) !== false
             || strpos((string)$product->getId(), $product_search) !== false;
-    });
-}
+    })
+    : $all_products;
+
+// Pagination logic
+$products_per_page = 6;
+$current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$total_products = count($products);
+$total_pages = ceil($total_products / $products_per_page);
+$offset = ($current_page - 1) * $products_per_page;
+$products_paginated = array_slice($products, $offset, $products_per_page);
 ?>
 
 <section class="min-h-screen bg-gray-100 py-10 px-6">
@@ -126,14 +136,12 @@ if ($product_search) {
                 </button>
             </form>
 
-            <?php if (count($products) === 0): ?>
+            <?php if (count($products_paginated) === 0): ?>
                 <p class="text-gray-600">Nenhum produto encontrado para este fornecedor.</p>
             <?php else: ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <?php foreach ($products as $product): ?>
+                    <?php foreach ($products_paginated as $product): ?>
                         <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-
-                            <!-- Product Image -->
                             <?php if ($product->getImage()): ?>
                                 <img src="data:image/jpeg;base64,<?= base64_encode($product->getImage()) ?>" alt="Imagem do Produto"
                                     class="w-full h-48 object-cover rounded mb-4">
@@ -143,24 +151,31 @@ if ($product_search) {
                                 </div>
                             <?php endif; ?>
 
-                            <!-- Product Name and ID -->
                             <h2 class="text-xl font-semibold mb-1"><?= htmlspecialchars($product->getName()) ?></h2>
                             <p class="text-sm text-gray-500 mb-2">ID: <?= htmlspecialchars($product->getId()) ?></p>
-
-                            <!-- Stock Info -->
                             <p class="text-gray-600 mb-1">Preço: R$ <?= number_format($product->getStock()->getPrice(), 2, ',', '.') ?></p>
                             <p class="text-gray-600 mb-4">Quantidade: <?= htmlspecialchars($product->getStock()->getQuantity()) ?></p>
 
-                            <!-- Link -->
-                            <a
-                                href="product_details.php?id=<?= $product->getId() ?>"
-                                class="text-blue-600 hover:underline text-sm">
+                            <a href="product_details.php?id=<?= $product->getId() ?>" class="text-blue-600 hover:underline text-sm">
                                 Ver detalhes
                             </a>
                         </div>
                     <?php endforeach; ?>
                 </div>
 
+                <!-- Pagination Controls -->
+                <?php if ($total_pages > 1): ?>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <a
+                                href="?<?= http_build_query(['id' => $supplier_id, 'search' => $product_search, 'page' => $i]) ?>"
+                                class="px-3 py-1 rounded border text-sm
+                                    <?= $i === $current_page ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100' ?>">
+                                <?= $i ?>
+                            </a>
+                        <?php endfor; ?>
+                    </div>
+                <?php endif; ?>
 
             <?php endif; ?>
         </div>
