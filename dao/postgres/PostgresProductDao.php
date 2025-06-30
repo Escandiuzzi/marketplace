@@ -85,7 +85,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $user = null;
 
         $query = "SELECT
-                   supplier_id, name, description, quantity, price
+                   supplier_id, name, description, quantity, price, image
                 FROM
                     " . $this->table_name . "
                 WHERE
@@ -98,13 +98,15 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $image = is_resource($row['image']) ? stream_get_contents($row['image']) : null;
+
         if ($row) {
             $product = new Product(
                 $id,
                 $row['supplier_id'],
                 $row['name'],
                 $row['description'],
-                '',
+                $image,
                 new Stock(
                     $row['quantity'],
                     $row['price']
@@ -120,7 +122,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $product = null;
 
         $query = "SELECT
-                    supplier_id, name, description, quantity, price
+                    supplier_id, name, description, quantity, price, image
                 FROM
                     " . $this->table_name . "
                 WHERE
@@ -134,13 +136,15 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        $image = is_resource($row['image']) ? stream_get_contents($row['image']) : null;
+
         if ($row) {
             $product = new Product(
                 $row['id'],
                 $row['supplier_id'],
                 $row['name'],
                 $row['description'],
-                '',
+                $image,
                 new Stock(
                     $row['quantity'],
                     $row['price']
@@ -166,12 +170,13 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             extract($row);
+            $image = is_resource($row['image']) ? stream_get_contents($row['image']) : null;
             $products[] = new Product(
                 $row['id'],
                 $row['supplier_id'],
                 $row['name'],
                 $row['description'],
-                $row['image'],
+                $image,
                 new Stock(
                     $row['quantity'],
                     $row['price']

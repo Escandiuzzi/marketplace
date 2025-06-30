@@ -129,29 +129,38 @@ if ($product_search) {
             <?php if (count($products) === 0): ?>
                 <p class="text-gray-600">Nenhum produto encontrado para este fornecedor.</p>
             <?php else: ?>
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <?php foreach ($products as $product): ?>
-                        <div class="border rounded-lg p-4 shadow bg-gray-50">
+                        <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+
+                            <!-- Product Image -->
                             <?php if ($product->getImage()): ?>
-                                <img src="data:image/jpeg;base64,<?= base64_encode($product->getImage()) ?>" alt="Imagem do Produto" class="w-full h-48 object-cover mb-4 rounded">
+                                <img src="data:image/jpeg;base64,<?= base64_encode($product->getImage()) ?>" alt="Imagem do Produto"
+                                    class="w-full h-48 object-cover rounded mb-4">
                             <?php else: ?>
                                 <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 mb-4 rounded">
                                     Sem imagem
                                 </div>
                             <?php endif; ?>
 
-                            <h4 class="font-bold text-lg"><?= htmlspecialchars($product->getName()) ?></h4>
+                            <!-- Product Name and ID -->
+                            <h2 class="text-xl font-semibold mb-1"><?= htmlspecialchars($product->getName()) ?></h2>
                             <p class="text-sm text-gray-500 mb-2">ID: <?= htmlspecialchars($product->getId()) ?></p>
-                            <p class="text-gray-600 mb-2">Preço: R$ <?= number_format($product->getStock()->getPrice(), 2, ',', '.') ?></p>
-                            <p class="text-gray-600 mb-2">Quantidade: <?= htmlspecialchars($product->getStock()->getQuantity()) ?></p>
 
-                            <div class="flex justify-between text-sm">
-                                <a href="edit_product.php?id=<?= $product->getId() ?>" class="text-blue-600 hover:underline">Editar</a>
-                                <a href="./actions/admin/products/execute_product_delete.php?id=<?= $product->getId() ?>&supplier_id=<?= $product->getSupplierId() ?>" class="text-red-600 hover:underline" onclick="return confirm('Tem certeza que deseja excluir este produto?');">Excluir</a>
-                            </div>
+                            <!-- Stock Info -->
+                            <p class="text-gray-600 mb-1">Preço: R$ <?= number_format($product->getStock()->getPrice(), 2, ',', '.') ?></p>
+                            <p class="text-gray-600 mb-4">Quantidade: <?= htmlspecialchars($product->getStock()->getQuantity()) ?></p>
+
+                            <!-- Link -->
+                            <a
+                                href="product_details.php?id=<?= $product->getId() ?>"
+                                class="text-blue-600 hover:underline text-sm">
+                                Ver detalhes
+                            </a>
                         </div>
                     <?php endforeach; ?>
                 </div>
+
 
             <?php endif; ?>
         </div>

@@ -6,14 +6,16 @@ include_once "facade.php";
 $productDao = $factory->getProductDao();
 $search = $_GET['search'] ?? '';
 
-// Fetch and filter products
+// Fetch all products
 $products = $productDao->getAll();
 
 if ($search) {
     $products = array_filter($products, function ($product) use ($search) {
-        return stripos($product->getName(), $search) !== false;
+        return stripos($product->getName(), $search) !== false
+            || strpos((string)$product->getId(), $search) !== false;
     });
 }
+
 ?>
 
 <section class="min-h-screen bg-gray-100 py-12 px-6">
@@ -24,7 +26,7 @@ if ($search) {
                 <input
                     type="text"
                     name="search"
-                    placeholder="Buscar produto..."
+                    placeholder="Buscar produto ou id..."
                     value="<?= htmlspecialchars($search) ?>"
                     class="w-full sm:w-64 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
                 <button
@@ -41,9 +43,26 @@ if ($search) {
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php foreach ($products as $product): ?>
                     <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-                        <h2 class="text-xl font-semibold mb-2"><?= htmlspecialchars($product->getName()) ?></h2>
+
+                        <!-- Product Image -->
+                        <?php if ($product->getImage()): ?>
+                            <img src="data:image/jpeg;base64,<?= base64_encode($product->getImage()) ?>" alt="Imagem do Produto"
+                                class="w-full h-48 object-cover rounded mb-4">
+                        <?php else: ?>
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 mb-4 rounded">
+                                Sem imagem
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Product Name and ID -->
+                        <h2 class="text-xl font-semibold mb-1"><?= htmlspecialchars($product->getName()) ?></h2>
+                        <p class="text-sm text-gray-500 mb-2">ID: <?= htmlspecialchars($product->getId()) ?></p>
+
+                        <!-- Stock Info -->
                         <p class="text-gray-600 mb-1">Preço: R$ <?= number_format($product->getStock()->getPrice(), 2, ',', '.') ?></p>
                         <p class="text-gray-600 mb-4">Quantidade: <?= htmlspecialchars($product->getStock()->getQuantity()) ?></p>
+
+                        <!-- Link -->
                         <a
                             href="product_details.php?id=<?= $product->getId() ?>"
                             class="text-blue-600 hover:underline text-sm">
@@ -52,6 +71,7 @@ if ($search) {
                     </div>
                 <?php endforeach; ?>
             </div>
+
         <?php endif; ?>
     </div>
 </section>
