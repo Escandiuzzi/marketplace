@@ -56,6 +56,7 @@ $client = $clientDao->searchById($order->getClientId());
             <?php endif; ?>
             <h3 class="font-semibold"><?= htmlspecialchars($product->getName()) ?></h3>
             <p>ID: <?= $product->getId() ?></p>
+            <p>Descrição: <?= $product->getDescription() ?></p>
             <p>Quantidade: <?= $quantity ?></p>
             <p>Preço unitário: R$ <?= number_format($price / 100, 2, ',', '.') ?></p>
             <p><strong>Total: R$ <?= number_format($total / 100, 2, ',', '.') ?></strong></p>
