@@ -46,7 +46,6 @@ class PostgresOrderDao extends PostgresDao implements OrderDaoInterface
                 ");
                 $updateStockStmt->bindValue(":quantity", $quantity);
                 $updateStockStmt->bindValue(":product_id", $product_id);
-
             }
 
             $this->conn->commit();
@@ -76,9 +75,15 @@ class PostgresOrderDao extends PostgresDao implements OrderDaoInterface
             SET shipping_date = :shipping_date, status = :status
             WHERE id = :id";
 
+        $shippingDate = null;
+
+        if ($order->getShippingDate() !== null) {
+            $shippingDate = $order->getShippingDate()->format('Y-m-d');
+        }
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(":id", $order->getId());
-        $stmt->bindValue(":shipping_date", $order->getShippingDate()->format('Y-m-d'));
+        $stmt->bindValue(":shipping_date", $shippingDate);
         $stmt->bindValue(":status", $order->getStatus()->value);
 
         return $stmt->execute();
@@ -184,7 +189,139 @@ class PostgresOrderDao extends PostgresDao implements OrderDaoInterface
 
     public function getAll(): array
     {
-        $stmt = $this->conn->query("SELECT * FROM {$this->orderTable} ORDER BY id DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $orders = [];
+
+        $query = "
+        SELECT o.*, op.product_id, op.quantity, op.price
+        FROM orders o
+        JOIN order_items op ON o.id = op.order_id
+        ORDER BY o.created_at DESC
+    ";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $groupedOrders = [];
+
+        foreach ($rows as $row) {
+            $orderId = $row['id'];
+
+            if (!isset($groupedOrders[$orderId])) {
+                $groupedOrders[$orderId] = [
+                    'order_data' => $row,
+                    'products' => []
+                ];
+            }
+
+            $groupedOrders[$orderId]['products'][] = [
+                'product_id' => $row['product_id'],
+                'quantity' => (int) $row['quantity'],
+                'price' => (int) $row['price']
+            ];
+        }
+
+        foreach ($groupedOrders as $group) {
+            $row = $group['order_data'];
+            $products = [];
+
+            $factory = new PostgresDaoFactory();
+            $productDao = $factory->getProductDao();
+
+            foreach ($group['products'] as $item) {
+                $product = $productDao->searchById($item['product_id']);
+                if ($product) {
+                    $products[] = [
+                        'product' => $product,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                        'total' => $item['price'] * $item['quantity']
+                    ];
+                }
+            }
+
+            $orders[] = new Order(
+                (int) $row['id'],
+                (int) $row['client_id'],
+                $products,
+                (int) $row['total'],
+                new DateTime($row['created_at']),
+                $row['shipping_date'] ? new DateTime($row['shipping_date']) : new DateTime(), // default fallback
+                Status::from($row['status'])
+            );
+        }
+
+        return $orders;
+    }
+
+    public function getAllByClientId(int $clientId): array
+    {
+        $orders = [];
+
+        $query = "
+        SELECT o.*, op.product_id, op.quantity, op.price
+        FROM orders o
+        JOIN order_items op ON o.id = op.order_id
+        WHERE o.client_id = :client_id
+        ORDER BY o.created_at DESC
+    ";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':client_id', $clientId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $groupedOrders = [];
+
+        foreach ($rows as $row) {
+            $orderId = $row['id'];
+
+            if (!isset($groupedOrders[$orderId])) {
+                $groupedOrders[$orderId] = [
+                    'order_data' => $row,
+                    'products' => []
+                ];
+            }
+
+            $groupedOrders[$orderId]['products'][] = [
+                'product_id' => $row['product_id'],
+                'quantity' => (int) $row['quantity'],
+                'price' => (int) $row['price']
+            ];
+        }
+
+        foreach ($groupedOrders as $group) {
+            $row = $group['order_data'];
+            $products = [];
+
+            $factory = new PostgresDaoFactory();
+            $productDao = $factory->getProductDao();
+
+            foreach ($group['products'] as $item) {
+                $product = $productDao->searchById($item['product_id']);
+                if ($product) {
+                    $products[] = [
+                        'product' => $product,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                        'total' => $item['price'] * $item['quantity']
+                    ];
+                }
+            }
+
+            $orders[] = new Order(
+                (int) $row['id'],
+                (int) $row['client_id'],
+                $products,
+                (int) $row['total'],
+                new DateTime($row['created_at']),
+                $row['shipping_date'] ? new DateTime($row['shipping_date']) : new DateTime(), // default fallback
+                Status::from($row['status'])
+            );
+        }
+
+        return $orders;
     }
 }

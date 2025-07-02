@@ -44,6 +44,13 @@ $products = array_slice($filtered_products, $offset, $products_per_page);
         }
     }
     ?>
+
+    <!-- Meus pedidos Button -->
+    <a href="my_orders.php"
+        class="ml-6 relative inline-flex items-center bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition text-sm">
+        Meus Pedidos
+    </a>
+
     <!-- Ver Carrinho Button -->
     <a href="checkout.php"
         class="ml-6 relative inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm">

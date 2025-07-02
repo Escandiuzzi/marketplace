@@ -16,7 +16,7 @@ require_once "auth_admin.php";
                 <p class="text-gray-600">Adicionar, editar ou remover usuários do sistema.</p>
             </a>
 
-            <a href="view_orders.php" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+            <a href="admin_view_orders.php" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
                 <h2 class="text-xl font-semibold mb-2">Visualizar Pedidos</h2>
                 <p class="text-gray-600">Acompanhar pedidos realizados pelos clientes.</p>
             </a>

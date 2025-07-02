@@ -1,5 +1,6 @@
 <?php
-interface OrderDaoInterface {
+interface OrderDaoInterface
+{
 
     public function insert(Order $order): int;
     public function remove(Order $order): bool;
@@ -7,6 +8,6 @@ interface OrderDaoInterface {
     public function update(Order &$order): bool;
     public function searchById(int $id): ?Order;
     public function searchByClientId(int $clientId): ?Order;
-    public function getAll(): Array;
+    public function getAll(): array;
+    public function getAllByClientId(int $clientId): array;
 }
-?>
