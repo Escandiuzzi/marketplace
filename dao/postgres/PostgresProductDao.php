@@ -65,12 +65,19 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $stmt = $this->conn->prepare($query);
 
         // bind values 
-        $stmt->bindParam(":id", $product->getId());
-        $stmt->bindParam(":supplier_id", $product->getSupplierId());
-        $stmt->bindParam(":name", $product->getName());
-        $stmt->bindParam(":description", $product->getDescription());
-        $stmt->bindParam(":quantity", $product->getStock()->getQuantity());
-        $stmt->bindParam(":price", $product->getStock()->getPrice());
+        $id = $product->getId();
+        $supplier_id = $product->getSupplierId();
+        $name = $product->getName();
+        $description = $product->getDescription();
+        $quantity = $product->getStock()->getQuantity();
+        $price = $product->getStock()->getPrice();
+
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":supplier_id", $supplier_id);
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":description", $description);
+        $stmt->bindParam(":quantity", $quantity);
+        $stmt->bindParam(":price", $price);
 
         // execute the query
         if ($stmt->execute()) {

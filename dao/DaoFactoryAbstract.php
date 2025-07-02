@@ -4,6 +4,7 @@ include_once('ClientDaoInterface.php');
 include_once('SupplierDaoInterface.php');
 include_once('ProductDaoInterface.php');
 include_once('AdministratorDaoInterface.php');
+include_once('OrderDaoInterface.php');
 
 abstract class DaoFactoryAbstract {
 
@@ -13,5 +14,6 @@ abstract class DaoFactoryAbstract {
     public abstract function getSupplierDao(): SupplierDaoInterface;
     public abstract function getProductDao(): ProductDaoInterface;
     public abstract function getAdministratorDao(): AdministratorDaoInterface;
+    public abstract function getOrderDao(): OrderDaoInterface;
 }
 ?>

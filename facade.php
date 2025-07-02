@@ -3,9 +3,11 @@ include_once('models/Client.php');
 include_once('models/Supplier.php');
 include_once('models/Product.php');
 include_once('models/Administrator.php');
+include_once('models/Order.php');
 include_once('models/types/Address.php');
 include_once('models/types/CreditCard.php');
 include_once('models/types/Stock.php');
+include_once('models/types/Status.php');
 
 include_once('dao/ClientDaoInterface.php');
 include_once('dao/DaoFactoryAbstract.php');

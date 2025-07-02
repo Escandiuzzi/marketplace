@@ -58,6 +58,35 @@ CREATE TABLE products (
         ON DELETE SET NULL
 );
 
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    client_id INT,
+    total INT,
+    created_at DATE DEFAULT CURRENT_DATE,
+    shipping_date DATE,
+    status VARCHAR(20),
+    CONSTRAINT fk_client
+        FOREIGN KEY (client_id)
+        REFERENCES clients(id)
+        ON DELETE SET NULL
+);
+
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT,
+    price INT,
+    CONSTRAINT fk_order
+        FOREIGN KEY (order_id)
+        REFERENCES orders(id)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_product
+        FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON DELETE SET NULL
+);
+
 INSERT INTO products (name, description, price, quantity, supplier_id, image) VALUES
 ('Product A', 'Description for Product A', 10.00, 100, 1, NULL),
 ('Product B', 'Description for Product B', 20.00, 50, 2, NULL),

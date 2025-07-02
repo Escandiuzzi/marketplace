@@ -156,7 +156,7 @@ $products_paginated = array_slice($products, $offset, $products_per_page);
                             <p class="text-gray-600 mb-1">Preço: R$ <?= number_format($product->getStock()->getPrice(), 2, ',', '.') ?></p>
                             <p class="text-gray-600 mb-4">Quantidade: <?= htmlspecialchars($product->getStock()->getQuantity()) ?></p>
 
-                            <a href="product_details.php?id=<?= $product->getId() ?>" class="text-blue-600 hover:underline text-sm">
+                            <a href="edit_product.php?id=<?= $product->getId() ?>" class="text-blue-600 hover:underline text-sm">
                                 Ver detalhes
                             </a>
                         </div>

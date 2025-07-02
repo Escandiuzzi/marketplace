@@ -3,6 +3,7 @@ include_once('PostgresClientDao.php');
 include_once('PostgresSupplierDao.php');
 include_once('PostgresProductDao.php');
 include_once('PostgresAdministratorDao.php');
+include_once('PostgresOrderDao.php');
 
 class PostgresDaofactory extends DaoFactoryAbstract
 {
@@ -43,5 +44,10 @@ class PostgresDaofactory extends DaoFactoryAbstract
     public function getAdministratorDao(): AdministratorDaoInterface
     {
         return new PostgresAdministratorDao($this->getConnection());
+    }
+
+     public function getOrderDao(): OrderDaoInterface
+    {
+        return new PostgresOrderDao($this->getConnection());
     }
 }
