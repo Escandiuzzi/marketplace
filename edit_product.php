@@ -19,7 +19,7 @@ $product = $dao->searchById($product_id);
     <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-2xl">
         <h2 class="text-2xl font-semibold mb-6 text-center">Editar Produto</h2>
 
-        <form action="./actions//admin//products/execute_product_update.php" method="POST" class="space-y-4">
+        <form action="./actions//admin//products/execute_product_update.php" enctype="multipart/form-data" method="POST" class="space-y-4">
             <input type="hidden" name="id" value="<?= htmlspecialchars($product->getId()) ?>">
             <input type="hidden" name="supplier_id" value="<?= htmlspecialchars($product->getSupplierId()) ?>">
 
@@ -50,6 +50,12 @@ $product = $dao->searchById($product_id);
                         value="<?= htmlspecialchars($product->getStock()->getQuantity()) ?>"
                         class="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
+            </div>
+
+            <div>
+                <label for="image" class="block font-medium text-gray-700 mb-1">Imagem do Produto</label>
+                <input type="file" name="image" id="image" accept="image/*"
+                    class="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div class="text-center mt-6">

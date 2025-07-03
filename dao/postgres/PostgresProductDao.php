@@ -59,7 +59,8 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
             name = :name,
             description = :description,
             quantity = :quantity,
-            price = :price
+            price = :price,
+            image = :image
           WHERE id = :id";
 
         $stmt = $this->conn->prepare($query);
@@ -71,6 +72,7 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $description = $product->getDescription();
         $quantity = $product->getStock()->getQuantity();
         $price = $product->getStock()->getPrice();
+        $image = $product->getImage();
 
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":supplier_id", $supplier_id);
@@ -78,7 +80,8 @@ class PostgresProductDao extends PostgresDao implements ProductDaoInterface
         $stmt->bindParam(":description", $description);
         $stmt->bindParam(":quantity", $quantity);
         $stmt->bindParam(":price", $price);
-
+        $stmt->bindParam(":image", $image, PDO::PARAM_LOB);
+        
         // execute the query
         if ($stmt->execute()) {
             return true;

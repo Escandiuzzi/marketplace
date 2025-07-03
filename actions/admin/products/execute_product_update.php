@@ -16,7 +16,15 @@ function clean($value)
 
 $errors = [];
 
-// Sanitize/validate inputs
+
+$image = null;
+
+if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    $imageTmpPath = $_FILES['image']['tmp_name'];
+
+    $image = file_get_contents($imageTmpPath);
+}
+
 $id = (int) ($_POST['id'] ?? 0);
 $name = clean($_POST['name'] ?? '');
 $description = clean($_POST['description'] ?? '');
@@ -41,7 +49,7 @@ if (!empty($errors)) {
 }
 
 $stock = new Stock($quantity, $price);
-$product = new Product($id, $supplier_id, $name, $description, '', $stock);
+$product = new Product($id, $supplier_id, $name, $description, $image, $stock);
 
 $dao = $factory->getProductDao();
 $dao->update($product);
