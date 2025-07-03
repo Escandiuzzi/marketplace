@@ -1,5 +1,8 @@
 <?php
+include_once "../facade.php";
+
 header("Content-Type: application/json");
+$orderDao = $factory->getOrderDao();
 
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -12,12 +15,13 @@ if ($uri[1] !== 'api') {
 }
 
 $resource = $uri[2] ?? null;
-$id = $uri[3] ?? null;
+$id = $_GET["id"] ?? null;
+$name = $_GET["name"] ?? null;
 
 switch ($resource) {
     case 'orders':
         require 'orders.php';
-        handleOrdersRequest($requestMethod, $id);
+        handleOrdersRequest($requestMethod, $orderDao, $id, $name);
         break;
     default:
         http_response_code(404);

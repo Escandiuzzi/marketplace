@@ -1,37 +1,18 @@
 <?php
-
-function handleOrdersRequest($method, $id) {
+function handleOrdersRequest($method, $orderDao, $id, $name)
+{
     switch ($method) {
         case 'GET':
             if ($id) {
-                echo json_encode(["client" => "Get client $id"]);
+                $result = $orderDao->searchById((int)$id);
+                echo json_encode($result ?? ["message" => "Order not found"]);;
+            } else if ($name) {
+                $result = $orderDao->getAllByClientName($name);
+                echo json_encode($result ?? ["message" => "Order not found"]);;
             } else {
-                echo json_encode(["clients" => ["Client 1", "Client 2"]]);
+                $result = $orderDao->getAll();
+                echo json_encode($result ?? ["message" => "Order not found"]);;
             }
-            break;
-
-        case 'POST':
-            $data = json_decode(file_get_contents("php://input"), true);
-            echo json_encode(["message" => "Client created", "data" => $data]);
-            break;
-
-        case 'PUT':
-            if (!$id) {
-                http_response_code(400);
-                echo json_encode(["message" => "Missing client ID"]);
-                return;
-            }
-            $data = json_decode(file_get_contents("php://input"), true);
-            echo json_encode(["message" => "Client $id updated", "data" => $data]);
-            break;
-
-        case 'DELETE':
-            if (!$id) {
-                http_response_code(400);
-                echo json_encode(["message" => "Missing client ID"]);
-                return;
-            }
-            echo json_encode(["message" => "Client $id deleted"]);
             break;
 
         default:

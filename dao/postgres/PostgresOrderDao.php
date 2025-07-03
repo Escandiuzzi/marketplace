@@ -324,4 +324,76 @@ class PostgresOrderDao extends PostgresDao implements OrderDaoInterface
 
         return $orders;
     }
+
+    public function getAllByClientName(string $clientName): array
+    {
+        $orders = [];
+
+        $query = "
+        SELECT o.*, op.product_id, op.quantity, op.price
+        FROM orders o
+        JOIN order_items op ON o.id = op.order_id
+        JOIN clients c ON o.client_id = c.id
+        WHERE LOWER(c.name) LIKE LOWER(:name)
+        ORDER BY o.created_at DESC
+    ";
+
+        $stmt = $this->conn->prepare($query);
+        $likeName = '%' . $clientName . '%';
+        $stmt->bindParam(':name', $likeName);
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $groupedOrders = [];
+
+        foreach ($rows as $row) {
+            $orderId = $row['id'];
+
+            if (!isset($groupedOrders[$orderId])) {
+                $groupedOrders[$orderId] = [
+                    'order_data' => $row,
+                    'products' => []
+                ];
+            }
+
+            $groupedOrders[$orderId]['products'][] = [
+                'product_id' => $row['product_id'],
+                'quantity' => (int) $row['quantity'],
+                'price' => (int) $row['price']
+            ];
+        }
+
+        $factory = new PostgresDaoFactory();
+        $productDao = $factory->getProductDao();
+
+        foreach ($groupedOrders as $group) {
+            $row = $group['order_data'];
+            $products = [];
+
+            foreach ($group['products'] as $item) {
+                $product = $productDao->searchById($item['product_id']);
+                if ($product) {
+                    $products[] = [
+                        'product' => $product,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                        'total' => $item['price'] * $item['quantity']
+                    ];
+                }
+            }
+
+            $orders[] = new Order(
+                (int) $row['id'],
+                (int) $row['client_id'],
+                $products,
+                (int) $row['total'],
+                new DateTime($row['created_at']),
+                $row['shipping_date'] ? new DateTime($row['shipping_date']) : new DateTime(),
+                Status::from($row['status'])
+            );
+        }
+
+        return $orders;
+    }
 }

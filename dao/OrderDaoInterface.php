@@ -10,4 +10,5 @@ interface OrderDaoInterface
     public function searchByClientId(int $clientId): ?Order;
     public function getAll(): array;
     public function getAllByClientId(int $clientId): array;
+    public function getAllByClientName(string $clientName): array;
 }

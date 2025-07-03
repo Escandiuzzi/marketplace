@@ -1,6 +1,6 @@
 <?php
 
-class Order
+class Order implements JsonSerializable
 {
     private int $id;
     private int $clientId;
@@ -69,5 +69,16 @@ class Order
     public function getStatus(): Status
     {
         return $this->status;
+    }
+    public function jsonSerialize(): mixed {
+        return [
+            'id' => $this->id,
+            'clientId' => $this->clientId,
+            'products' => $this->products,
+            'total' => $this->total,
+            'createdAt' => $this->createdAt->format(DateTime::ATOM),
+            'shippingDate' => $this->shippingDate ? $this->shippingDate->format(DateTime::ATOM) : null,
+            'status' => $this->status->name
+        ];
     }
 }
