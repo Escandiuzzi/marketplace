@@ -39,7 +39,7 @@ $orders = array_slice($clientOrders, $offset, $ordersPerPage);
                                 <p class="text-sm text-gray-500">
                                     Data: <?= $order->getCreatedAt()->format('d/m/Y H:i') ?>
                                     • Total: R$ <?= number_format($order->getTotal() / 100, 2, ',', '.') ?>
-                                    • Status: <?= $order->getStatus()->name ?>
+                                    • Status: <?= $order->getShippingDate() != null ? 'Enviado' : ($order->getStatus() == Status::Rejected ? "Pedido Cancelado" : 'Pendente') ?>
                                 </p>
                             </div>
                             <a href="order_details.php?id=<?= $order->getId() ?>"

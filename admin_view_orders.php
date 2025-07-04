@@ -32,7 +32,6 @@ if ($search !== null && trim($search) !== '') {
         }
     }
 
-    // Remover duplicatas caso tenha vindo por ID e nome
     $clientOrders = array_unique($clientOrders, SORT_REGULAR);
 } else {
     $clientOrders = $orderDao->getAll();
@@ -47,11 +46,10 @@ $orders = array_slice($clientOrders, $offset, $ordersPerPage);
     <div class="max-w-4xl mx-auto bg-white shadow p-6 rounded-xl">
         <h1 class="text-2xl font-bold text-gray-800 mb-4">Meus Pedidos</h1>
 
-        <!-- Formulário de busca -->
         <form method="GET" class="mb-6 flex gap-2 flex-wrap">
             <input type="text" name="search" placeholder="Buscar por ID ou nome do cliente"
                 value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
-                class="border rounded-lg px-4 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                class="border rounded-lg px-4 py-2 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
                 Buscar
             </button>
@@ -61,7 +59,7 @@ $orders = array_slice($clientOrders, $offset, $ordersPerPage);
             <p class="text-gray-500">Nenhum pedido encontrado.</p>
         <?php else: ?>
             <ul class="space-y-4">
-                <?php foreach ($orders as $order): 
+                <?php foreach ($orders as $order):
                     $client = $clientDao->searchById($order->getClientId());
                 ?>
                     <div class="order-card bg-white rounded-lg shadow p-4 mb-4">
@@ -69,7 +67,13 @@ $orders = array_slice($clientOrders, $offset, $ordersPerPage);
                             <div>
                                 <h2 class="text-lg font-bold">Pedido #<?= $order->getId() ?></h2>
                                 <p>Cliente: <?= htmlspecialchars($client->getName()) ?></p>
-                                <p>Status: <?= $order->getStatus()->name ?></p>
+                                <p>Status: <?php if ($order->getStatus() == Status::Rejected): ?>
+                                        Pedido cancelado
+                                    <?php elseif ($order->getStatus() == Status::Approved): ?>
+                                        Aprovado
+                                    <?php else: ?>
+                                        Pendente
+                                    <?php endif; ?></p>
                                 <p>Data: <?= $order->getCreatedAt()->format('d/m/Y') ?></p>
                             </div>
                             <span class="text-blue-600 hover:underline">Ver detalhes</span>
@@ -99,20 +103,41 @@ $orders = array_slice($clientOrders, $offset, $ordersPerPage);
     </div>
 </section>
 
+
 <script>
 document.querySelectorAll('.toggle-details').forEach(btn => {
     btn.addEventListener('click', function () {
         const orderId = this.dataset.orderId;
         const detailsContainer = document.getElementById(`order-details-${orderId}`);
 
-        if (detailsContainer.classList.contains('hidden')) {
-            if (detailsContainer.innerHTML.trim() === '') {
-                // Fetch order details via AJAX
+        const isHidden = detailsContainer.classList.contains('hidden');
+        const hasContent = detailsContainer.innerHTML.trim() !== '';
+
+        if (isHidden) {
+            if (!hasContent) {
                 fetch(`./actions/cart/fetch_order_details.php?id=${orderId}`)
                     .then(res => res.text())
                     .then(html => {
                         detailsContainer.innerHTML = html;
                         detailsContainer.classList.remove('hidden');
+
+                        // Wait for DOM to render, then initialize Swiper
+                        setTimeout(() => {
+                            const swiperEl = detailsContainer.querySelector('.mySwiper');
+                            if (swiperEl && !swiperEl.classList.contains('swiper-initialized')) {
+                                new Swiper(swiperEl, {
+                                    loop: true,
+                                    pagination: {
+                                        el: '.swiper-pagination',
+                                        clickable: true,
+                                    },
+                                    navigation: {
+                                        nextEl: '.swiper-button-next',
+                                        prevEl: '.swiper-button-prev',
+                                    },
+                                });
+                            }
+                        }, 100); // short delay to ensure HTML is parsed
                     });
             } else {
                 detailsContainer.classList.remove('hidden');
@@ -123,5 +148,8 @@ document.querySelectorAll('.toggle-details').forEach(btn => {
     });
 });
 </script>
+
+</script>
+
 
 <?php include_once "layout_footer.php"; ?>

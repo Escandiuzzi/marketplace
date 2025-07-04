@@ -21,6 +21,11 @@ if (!$order) {
 
 $clientDao = $factory->getClientDao();
 $client = $clientDao->searchById($order->getClientId());
+
+$images = [];
+foreach ($order->getProducts() as $productData) {
+    array_push($images, $productData['product']->getImage());
+}
 ?>
 
 <section class="min-h-screen bg-gray-100 py-12 px-6">
@@ -31,7 +36,13 @@ $client = $clientDao->searchById($order->getClientId());
 
         <h1 class="text-2xl font-bold mb-4">Pedido #<?= $order->getId() ?></h1>
 
-        <p class="mb-2"><strong>Status:</strong> <?= $order->getStatus()->name ?></p>
+        <p class="mb-2"><strong>Status:</strong> <?php if ($order->getShippingDate()): ?>
+                <?= $order->getShippingDate()->format('d/m/Y') ?>
+            <?php elseif ($order->getStatus() == Status::Rejected): ?>
+                Pedido cancelado
+            <?php else: ?>
+                Pendente
+            <?php endif; ?></p>
         <p class="mb-2"><strong>Cliente:</strong> <?= htmlspecialchars($client->getName()) ?></p>
         <p class="mb-2"><strong>Data do Pedido:</strong> <?= $order->getCreatedAt()->format('d/m/Y H:i') ?></p>
         <p class="mb-6"><strong>Envio previsto:</strong> <?= $order->getShippingDate() ? $order->getShippingDate()->format('d/m/Y') : ($order->getStatus() == Status::Rejected ? "Pedido Cancelado" : 'aa') ?></p>
@@ -39,6 +50,43 @@ $client = $clientDao->searchById($order->getClientId());
         <hr class="my-6">
 
         <h2 class="text-xl font-semibold mb-4">Produtos</h2>
+
+        <?php if (!empty($images)): ?>
+            <div x-data="{ active: 0 }" class="mb-10">
+                <div class="relative w-full h-64 overflow-hidden rounded-xl">
+                    <?php foreach ($images as $index => $img): ?>
+                        <div x-show="active === <?= $index ?>"
+
+                            class="absolute inset-0 transition-opacity duration-500"
+                            x-transition:enter="opacity-0"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="opacity-100"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0">
+                            <?php if ($img): ?>
+                                <img src="data:image/jpeg;base64,<?= base64_encode($img) ?>"
+                                    class="w-full h-full object-cover"
+                                    alt="Imagem do produto">
+                            <?php else: ?>
+                                <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
+                                    Sem imagem
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="flex justify-center items-center gap-2 mt-4">
+                    <?php foreach ($images as $index => $_): ?>
+                        <button class="w-3 h-3 rounded-full border border-blue-500"
+                            :class="{ 'bg-blue-600': active === <?= $index ?>, 'bg-white': active !== <?= $index ?> }"
+                            @click="active = <?= $index ?>"></button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <?php foreach ($order->getProducts() as $productData):
@@ -73,5 +121,7 @@ $client = $clientDao->searchById($order->getClientId());
         <p class="text-xl font-bold text-right">Total do pedido: R$ <?= number_format($order->getTotal() / 100, 2, ',', '.') ?></p>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <?php include_once "layout_footer.php"; ?>

@@ -317,7 +317,7 @@ class PostgresOrderDao extends PostgresDao implements OrderDaoInterface
                 $products,
                 (int) $row['total'],
                 new DateTime($row['created_at']),
-                $row['shipping_date'] ? new DateTime($row['shipping_date']) : new DateTime(), // default fallback
+                $row['shipping_date'] ? new DateTime($row['shipping_date']) : null,
                 Status::from($row['status'])
             );
         }
