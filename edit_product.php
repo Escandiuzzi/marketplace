@@ -53,7 +53,18 @@ $product = $dao->searchById($product_id);
             </div>
 
             <div>
-                <label for="image" class="block font-medium text-gray-700 mb-1">Imagem do Produto</label>
+                <label class="block font-medium text-gray-700 mb-1">Imagem do Produto</label>
+
+                <?php if ($product->getImage()): ?>
+                    <div class="mb-4">
+                        <img src="data:image/jpeg;base64,<?= base64_encode($product->getImage()) ?>" alt="Imagem atual" class="h-40 w-auto rounded mb-2 border">
+                        <label class="inline-flex items-center text-sm">
+                            <input type="checkbox" name="remove_image" value="1" class="mr-2">
+                            Remover imagem atual
+                        </label>
+                    </div>
+                <?php endif; ?>
+
                 <input type="file" name="image" id="image" accept="image/*"
                     class="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500">
             </div>
