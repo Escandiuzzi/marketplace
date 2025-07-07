@@ -1,7 +1,6 @@
 <?php
 require "../../../facade.php";
 
-// Validate required POST fields
 $required = ['number', 'name', 'description'];
 foreach ($required as $field) {
     if (empty($_POST[$field])) {
@@ -16,7 +15,6 @@ function clean($value)
 
 $errors = [];
 
-// Sanitize/validate inputs
 $number = clean($_POST['number'] ?? '');
 $name = clean($_POST['name'] ?? '');
 $description = clean($_POST['description'] ?? '');
@@ -29,12 +27,10 @@ $city = clean($_POST['city'] ?? '');
 $state = clean($_POST['state'] ?? '');
 $zip = clean($_POST['zip'] ?? '');
 
-// Basic validation
 if (empty($number)) $errors[] = "Número do fornecedor é obrigatório.";
 if (empty($name)) $errors[] = "Nome é obrigatório.";
 if (empty($description)) $errors[] = "Descrição é obrigatória.";
 
-// Stop if errors exist
 if (!empty($errors)) {
     echo "<h3>Erros encontrados:</h3><ul>";
     foreach ($errors as $error) {

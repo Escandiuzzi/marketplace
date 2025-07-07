@@ -3,6 +3,6 @@
 if ($_SESSION['admin'] === TRUE) {
     return true;
 } else {
-    header("Location: unauthorized.php");  // or redirect to homepage
+    header("Location: unauthorized.php");
     exit;
 }

@@ -36,7 +36,6 @@ $products = array_slice($filtered_products, $offset, $products_per_page);
 <div class="text-sm text-gray-700 space-x-4 flex items-center justify-end p-2 bg-white">
 
     <?php
-    // Calculate cart quantity count
     $cart_count = 0;
     if (isset($_SESSION['cart'])) {
         foreach ($_SESSION['cart'] as $item) {

@@ -9,7 +9,6 @@ $dao = $factory->getSupplierDao();
 $search = $_GET['search'] ?? '';
 $all_suppliers = $dao->getAll();
 
-// Filter by name or ID
 $suppliers = $search
     ? array_filter($all_suppliers, function ($supplier) use ($search) {
         return stripos($supplier->getName(), $search) !== false
@@ -17,16 +16,13 @@ $suppliers = $search
     })
     : $all_suppliers;
 
-// Pagination setup
 $suppliers_per_page = 9;
 $current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $total_suppliers = count($suppliers);
 $total_pages = ceil($total_suppliers / $suppliers_per_page);
 $offset = ($current_page - 1) * $suppliers_per_page;
 
-// Slice for current page
 $suppliers_paginated = array_slice($suppliers, $offset, $suppliers_per_page);
-
 ?>
 
 <section class="min-h-screen bg-gray-100 py-12 px-6">

@@ -121,7 +121,6 @@ document.querySelectorAll('.toggle-details').forEach(btn => {
                         detailsContainer.innerHTML = html;
                         detailsContainer.classList.remove('hidden');
 
-                        // Wait for DOM to render, then initialize Swiper
                         setTimeout(() => {
                             const swiperEl = detailsContainer.querySelector('.mySwiper');
                             if (swiperEl && !swiperEl.classList.contains('swiper-initialized')) {
@@ -137,7 +136,7 @@ document.querySelectorAll('.toggle-details').forEach(btn => {
                                     },
                                 });
                             }
-                        }, 100); // short delay to ensure HTML is parsed
+                        }, 100);
                     });
             } else {
                 detailsContainer.classList.remove('hidden');

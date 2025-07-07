@@ -13,7 +13,6 @@ $productDao = $factory->getProductDao();
 $all_products = $productDao->getBySupplierId($supplier_id);
 $product_search = $_GET['search'] ?? '';
 
-// Filter by name or ID
 $products = $product_search
     ? array_filter($all_products, function ($product) use ($product_search) {
         return stripos($product->getName(), $product_search) !== false
@@ -21,7 +20,6 @@ $products = $product_search
     })
     : $all_products;
 
-// Pagination logic
 $products_per_page = 6;
 $current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $total_products = count($products);

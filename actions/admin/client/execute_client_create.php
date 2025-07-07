@@ -21,12 +21,10 @@ $city = clean($_POST['city'] ?? '');
 $state = clean($_POST['state'] ?? '');
 $zip = clean($_POST['zip'] ?? '');
 
-// Basic validations
 if (!$number) $errors[] = "Número é obrigatório.";
 if (!$name) $errors[] = "Nome é obrigatório.";
 if (!$email) $errors[] = "Email inválido ou ausente.";
 if (!$password || strlen($password) < 6) $errors[] = "Senha deve ter no mínimo 6 caracteres.";
-
 
 if (!empty($errors)) {
     echo "<h3>Erros no envio do formulário:</h3><ul>";

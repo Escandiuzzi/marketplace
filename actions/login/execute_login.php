@@ -3,10 +3,7 @@ require "../../facade.php";
 
 session_start();
 
-// Pega o login digitado pelo usuário
 $email = isset($_POST["email"]) ? addslashes(trim($_POST["email"])) : FALSE;
-
-// Pega a senha, a criptografando em MD5 
 $password = isset($_POST["password"]) ? md5(trim($_POST["password"])) : FALSE;
 
 if (!$email || !$password) {

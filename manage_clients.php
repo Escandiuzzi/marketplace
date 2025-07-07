@@ -5,12 +5,10 @@ include_once "layout_header.php";
 include_once "facade.php";
 require_once "auth_admin.php";
 
-// DAO and search setup
 $dao = $factory->getClientDao();
 $search = $_GET['search'] ?? '';
 $all_users = $dao->getAll();
 
-// Filter by name or ID
 $users = $search
     ? array_filter($all_users, function ($user) use ($search) {
         return stripos($user->getName(), $search) !== false
@@ -18,14 +16,12 @@ $users = $search
     })
     : $all_users;
 
-// Pagination logic
 $users_per_page = 10;
 $current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $total_users = count($users);
 $total_pages = ceil($total_users / $users_per_page);
 $offset = ($current_page - 1) * $users_per_page;
 
-// Slice users for current page
 $users_paginated = array_slice($users, $offset, $users_per_page);
 ?>
 
